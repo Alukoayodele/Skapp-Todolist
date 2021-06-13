@@ -7,11 +7,11 @@ import { v4 as uuidv4 } from "uuid";
 import TodoForm from "./components/TodoForm";
 import TodoList from "./components/TodoList";
 
-// const portal =
-//   window.location.hostname === "localhost" ? "https://siasky.net" : undefined;
+const portal =
+  window.location.hostname === "localhost" ? "https://siasky.net" : undefined;
 
 // Initiate the SkynetClient
-const client = new SkynetClient();
+const client = new SkynetClient(portal);
 const contentRecord = new ContentRecordDAC();
 uuidv4();
 const filename = "data.json";
@@ -110,13 +110,18 @@ const App = () => {
     }
   };
   const handleMySkyLogin = async () => {
-    const status = await mySky.requestLoginAccess();
-    setLoggedIn(status);
+    try {
+      const status = await mySky.requestLoginAccess();
+      setLoggedIn(status);
 
-    if (status) {
-      setUserID(await mySky.userID());
+      if (status) {
+        setUserID(await mySky.userID());
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
+
   const handleMySkyLogout = async () => {
     await mySky.logout();
     setLoggedIn(false);
